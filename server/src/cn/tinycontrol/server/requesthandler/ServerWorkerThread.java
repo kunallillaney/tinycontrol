@@ -5,8 +5,6 @@ import java.net.InetAddress;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
-
 import cn.tinycontrol.common.model.FeedbackPacket;
 
 public class ServerWorkerThread implements Runnable {
@@ -18,6 +16,8 @@ public class ServerWorkerThread implements Runnable {
     private int clientPort;
     
     private boolean isShutDown = false;
+    
+    private boolean isRunning = false;
     
     private ByteArrayOutputStream dataStream;
     private Queue<FeedbackPacket> feedBackPacketQueue;
@@ -33,15 +33,21 @@ public class ServerWorkerThread implements Runnable {
         dataStream = new ByteArrayOutputStream();
     }
     
+    public boolean isRunning() {
+		return isRunning;
+	}
+    
     @Override
     public void run() {
         // TODO Auto-generated method stub
+    	isRunning = true;
         while(!isShutDown) {
             // Keep Sending data packets at rate X
             
         }
         // Close connections and so on
         // End the thread.
+        isRunning = false;
     }
     
     public void addData(byte[] data, int offset, int length) {
@@ -54,6 +60,7 @@ public class ServerWorkerThread implements Runnable {
     
     public void shutDown() {
         isShutDown = true;
+        // TODO Remove from the Map
     }
     
 }
