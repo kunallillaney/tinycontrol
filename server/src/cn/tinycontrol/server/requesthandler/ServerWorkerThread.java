@@ -17,8 +17,6 @@ public class ServerWorkerThread implements Runnable {
     
     private boolean isShutDown = false;
     
-    private boolean isRunning = false;
-    
     private ByteArrayOutputStream dataStream;
     private Queue<FeedbackPacket> feedBackPacketQueue;
     private int R;
@@ -33,21 +31,15 @@ public class ServerWorkerThread implements Runnable {
         dataStream = new ByteArrayOutputStream();
     }
     
-    public boolean isRunning() {
-		return isRunning;
-	}
-    
     @Override
     public void run() {
         // TODO Auto-generated method stub
-    	isRunning = true;
         while(!isShutDown) {
             // Keep Sending data packets at rate X
             
         }
         // Close connections and so on
         // End the thread.
-        isRunning = false;
     }
     
     public void addData(byte[] data, int offset, int length) {
