@@ -16,7 +16,7 @@ public class FeedbackPacket {
 	
 	private DatagramPacket udpPacket;
 	
-	public FeedbackPacket(int timeStamp, int elapsedTime, int receiveRate, int lossEventRate) {
+	public FeedbackPacket(int timeStamp, int elapsedTime, float receiveRate, float lossEventRate) {
 		this.timeStamp = timeStamp;
 		this.elapsedTime = elapsedTime;
 		this.receiveRate = receiveRate;
