@@ -2,7 +2,6 @@ package cn.tinycontrol.server.core;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
-import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.util.Date;
 import java.util.Queue;
@@ -15,12 +14,12 @@ import cn.tinycontrol.server.requesthandler.ServerWorkerThread;
 
 public class UDPReceiverThread extends Thread {
 	
-	private DatagramSocket udpSocket;	
+	private TinyControlServerSocket tcServerSocket;	// This is the TinyControlServerSocket that created this thread!
 
 	Queue<TinyControlSocket> ackQueue = new LinkedBlockingQueue<TinyControlSocket>();
 	
-	public UDPReceiverThread(DatagramSocket udpSocket) {
-		this.udpSocket = udpSocket;
+	public UDPReceiverThread(TinyControlServerSocket tcServerSocket) {
+		this.tcServerSocket = tcServerSocket;
 	}
 	
 	public TinyControlSocket getSocketFromQueue() {
@@ -36,7 +35,7 @@ public class UDPReceiverThread extends Thread {
 			while (true) {
 				byte[] receiveData = new byte[FeedbackPacket.PACKET_LENGTH];
 				DatagramPacket receivePacket = new DatagramPacket(receiveData,receiveData.length);
-				udpSocket.receive(receivePacket);
+				tcServerSocket.getUdpSocket().receive(receivePacket);
 				
 				FeedbackPacket feedbackPacket = new FeedbackPacket(receivePacket);
 				
@@ -44,7 +43,7 @@ public class UDPReceiverThread extends Thread {
 				case -1: // SYN
 					DataPacket synAckDataPacket = new DataPacket(-1, 0, 0, new byte[1000]);
 					byte[] synDataPacketBytes = synAckDataPacket.constructBytes();
-					udpSocket.send(new DatagramPacket(synDataPacketBytes,
+					tcServerSocket.getUdpSocket().send(new DatagramPacket(synDataPacketBytes,
 							synDataPacketBytes.length, feedbackPacket
 									.getSourceAddr(), feedbackPacket.getPort()));
 					break;
@@ -53,7 +52,7 @@ public class UDPReceiverThread extends Thread {
 					int initialRTT = (int) (currentTime - threadStartTime);
 					ServerWorkerThread workerThread = new ServerWorkerThread(
 							initialRTT, feedbackPacket.getSourceAddr(),
-							feedbackPacket.getPort());
+							feedbackPacket.getPort(), tcServerSocket);
 					TinyControlSocket tcs = new TinyControlSocket(workerThread);
 					ackQueue.add(tcs); // add to the queue
 					break;

@@ -4,29 +4,29 @@ import cn.tinycontrol.server.requesthandler.ServerWorkerThread;
 
 public class TinyControlSocket {
 	
-	private WorkerThread workerThread;
+	private WorkerRunnableThread workerRunnableThread;
 	
-	class WorkerThread extends Thread {
-		protected ServerWorkerThread workerImpl;
+	class WorkerRunnableThread extends Thread {
+		protected ServerWorkerThread workerThread;
 		
-		public WorkerThread(ServerWorkerThread workerImpl) {
-			this.workerImpl = workerImpl;
+		public WorkerRunnableThread(ServerWorkerThread workerThread) {
+			this.workerThread = workerThread;
 		}
 	}
 	
-	public TinyControlSocket(ServerWorkerThread workerImpl) {
-		this.workerThread = new WorkerThread(workerImpl);
+	public TinyControlSocket(ServerWorkerThread workerThread) {
+		this.workerRunnableThread = new WorkerRunnableThread(workerThread);
 	}
 
 	public void write(byte[] data,int offset, int length ) {
-		workerThread.workerImpl.addData(data, offset, length);
-		// If the thread is not started start the same
-		if(!workerThread.isAlive()) {
-			workerThread.start();
+		workerRunnableThread.workerThread.addData(data, offset, length);
+		// If the thread is not started start the same when the first write is called.
+		if(!workerRunnableThread.isAlive()) {
+			workerRunnableThread.start();
 		}
 	}
 
 	public void close() {
-		workerThread.workerImpl.shutDown();
+		workerRunnableThread.workerThread.shutDown();
 	}
 }
