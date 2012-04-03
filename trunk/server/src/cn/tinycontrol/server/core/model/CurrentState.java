@@ -3,7 +3,7 @@ package cn.tinycontrol.server.core.model;
 import java.util.ArrayList;
 import java.util.List;
 
-class CurrentState {
+public class CurrentState {
     
     public int R;
     
