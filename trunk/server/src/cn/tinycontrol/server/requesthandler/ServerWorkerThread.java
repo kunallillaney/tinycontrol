@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import cn.tinycontrol.common.model.FeedbackPacket;
+import cn.tinycontrol.server.core.TinyControlServerSocket;
 
 public class ServerWorkerThread implements Runnable {
 
@@ -17,15 +18,17 @@ public class ServerWorkerThread implements Runnable {
     
     private boolean isShutDown = false;
     
+    private TinyControlServerSocket tcServerSocket; // Server Socket with which this thread is associated with.
     private ByteArrayOutputStream dataStream;
     private Queue<FeedbackPacket> feedBackPacketQueue;
     private int R;
     private float X;
     
-    public ServerWorkerThread(int initialRTT, InetAddress clientAddr, int clientPort) {
+    public ServerWorkerThread(int initialRTT, InetAddress clientAddr, int clientPort, TinyControlServerSocket tcServerSocket) {
         this.initialRTT = initialRTT;
         this.clientAddr = clientAddr;
         this.clientPort = clientPort;
+        this.tcServerSocket = tcServerSocket;
         
         feedBackPacketQueue = new LinkedList<FeedbackPacket>();
         dataStream = new ByteArrayOutputStream();
@@ -33,7 +36,9 @@ public class ServerWorkerThread implements Runnable {
     
     @Override
     public void run() {
-        // TODO Auto-generated method stub
+        // Self-register in the Map
+        MapHandler.getInstance().add(clientAddr, clientPort, this);
+        
         while(!isShutDown) {
             // Keep Sending data packets at rate X
             
