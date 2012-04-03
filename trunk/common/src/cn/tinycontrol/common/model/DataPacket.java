@@ -8,6 +8,8 @@ import cn.tinycontrol.common.parser.TypeByteUtil;
 public class DataPacket {
 	
 	public static int PACKET_LENGTH = 1012;
+	
+	public static int PAYLOAD_LENGTH = 1000; // this is s value
 
 	private int sequenceNumber;
 	private int timeStamp;
