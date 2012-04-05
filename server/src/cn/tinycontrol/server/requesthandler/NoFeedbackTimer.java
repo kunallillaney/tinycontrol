@@ -1,35 +1,34 @@
 package cn.tinycontrol.server.requesthandler;
 
+import java.util.Timer;
+
 import cn.tinycontrol.server.core.model.CurrentState;
 
 public class NoFeedbackTimer {
 
 	private CurrentState curState;
-	
-	public NoFeedbackTimer(CurrentState curState){
+
+	public int expireAfter;
+
+	Timer timerExpire = null;
+
+	public NoFeedbackTimer(CurrentState curState) {
 		this.curState = curState;
-	}
-
-	public int timerLimit; 
-	
-	public void updateLimit(int tLimit) {
-		// TODO Auto-generated method stub
-
+		this.timerExpire = new Timer();
 	}
 	
+	public void setExpireAfter(int expireAfter) {
+		this.expireAfter = expireAfter;
+	}
+
 	public void startTimer() {
-		// TODO Auto-generated method stub
-
+		MyTimerTask timerTask = new MyTimerTask(curState, timerExpire);
+		timerExpire.schedule(timerTask ,(System.currentTimeMillis()+expireAfter));		
 	}
-	
-	public void stopTimer() {
-		// TODO Auto-generated method stub
 
+	public void resetTimer(long time) {
+		timerExpire.cancel();
+		MyTimerTask timerTask = new MyTimerTask(curState, timerExpire);
+		timerExpire.schedule(timerTask , (long) (System.currentTimeMillis()+time));
 	}
-	
-	public void resetTimer() {
-		// TODO Auto-generated method stub
-
-	}
-	
 }
