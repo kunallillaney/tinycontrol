@@ -3,7 +3,6 @@ package cn.tinycontrol.server.core;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.SocketException;
-import java.util.Date;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import cn.tinycontrol.common.model.DataPacket;
@@ -37,8 +36,6 @@ public class UDPReceiverThread extends Thread {
 	@Override
 	public void run() {
 		try {
-			long threadStartTime = new Date().getTime();
-			
 			while (true) {
 				byte[] receiveData = new byte[FeedbackPacket.PACKET_LENGTH];
 				DatagramPacket receivePacket = new DatagramPacket(receiveData,receiveData.length);
@@ -69,7 +66,9 @@ public class UDPReceiverThread extends Thread {
 					ackQueue.add(tcs); // add to the queue
 					break;
 				case -3: // close
-					MapHandler.getInstance().get(feedbackPacket.getSourceAddr(),feedbackPacket.getPort()).shutDown();
+				    System.out.println("Recieved CLOSE from " + clientDetails + ". Packet: " + feedbackPacket);
+				    MapHandler.getInstance().get(feedbackPacket.getSourceAddr(),feedbackPacket.getPort()).shutDown();
+					break;
 				default: // feedback
 					System.out.println("Recieved Feedback Packet from " + clientDetails + ". Packet: " + feedbackPacket);
 					MapHandler.getInstance().get(feedbackPacket.getSourceAddr(),feedbackPacket.getPort()).handleFeedBackPacket(feedbackPacket);
