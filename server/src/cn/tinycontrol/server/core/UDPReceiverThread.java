@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.SocketException;
 import java.util.Date;
-import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import cn.tinycontrol.common.model.DataPacket;
@@ -16,7 +15,7 @@ public class UDPReceiverThread extends Thread {
 	
 	private TinyControlServerSocket tcServerSocket;	// This is the TinyControlServerSocket that created this thread!
 
-	Queue<TinyControlSocket> ackQueue = new LinkedBlockingQueue<TinyControlSocket>();
+	LinkedBlockingQueue<TinyControlSocket> ackQueue = new LinkedBlockingQueue<TinyControlSocket>();
 	
 	public UDPReceiverThread(TinyControlServerSocket tcServerSocket) {
 		this.tcServerSocket = tcServerSocket;
@@ -24,7 +23,13 @@ public class UDPReceiverThread extends Thread {
 	
 	public TinyControlSocket getSocketFromQueue() {
 		// TODO Removes a TinyControlSocket from ackQueue and returns that socket to the caller
-		return ackQueue.remove();
+		try {
+			return ackQueue.take();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	@Override
@@ -57,16 +62,9 @@ public class UDPReceiverThread extends Thread {
 					ackQueue.add(tcs); // add to the queue
 					break;
 				case -3: // close
-					MapHandler
-							.getInstance()
-							.get(feedbackPacket.getSourceAddr(),
-									feedbackPacket.getPort()).shutDown();
+					MapHandler.getInstance().get(feedbackPacket.getSourceAddr(),feedbackPacket.getPort()).shutDown();
 				default: // feedback
-					MapHandler
-					.getInstance()
-					.get(feedbackPacket.getSourceAddr(),
-							feedbackPacket.getPort())
-					.handleFeedBackPacket(feedbackPacket);
+					MapHandler.getInstance().get(feedbackPacket.getSourceAddr(),feedbackPacket.getPort()).handleFeedBackPacket(feedbackPacket);
 				}
 			}
 
