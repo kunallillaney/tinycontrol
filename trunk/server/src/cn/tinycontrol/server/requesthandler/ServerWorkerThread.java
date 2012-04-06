@@ -5,6 +5,7 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
+import java.util.Random;
 
 import cn.tinycontrol.common.model.DataPacket;
 import cn.tinycontrol.common.model.FeedbackPacket;
@@ -57,7 +58,7 @@ public class ServerWorkerThread implements Runnable, ServerConstants {
         curState.initialRate = wInit/this.initialRTT * 1000;
         curState.X = curState.initialRate;
         curState.tld = System.currentTimeMillis(); // time when first RTT was received.
-        System.out.println("Determined current sending rate as - "+curState.X);
+//        System.out.println("Determined current sending rate as - "+curState.X);
         
         noFeedbackTimer = new NoFeedbackTimer(curState);
         // Set timer to expire after 2 seconds. Do not start the timer here.
@@ -73,6 +74,8 @@ public class ServerWorkerThread implements Runnable, ServerConstants {
         boolean testCondn = false;
         String isDropPacketsStr = System.getProperty("tinycontrol.droppackets");
         boolean isDropPackets = isDropPacketsStr.equalsIgnoreCase("true");
+        
+        Random randIdxGen = new Random(System.currentTimeMillis());
         
         while(!testCondn) {
             // Keep Sending data packets at rate X
@@ -91,11 +94,17 @@ public class ServerWorkerThread implements Runnable, ServerConstants {
 						byte[] udpDataBytes = dataPacket.constructBytes();
                         DatagramPacket udpPacket = new DatagramPacket(udpDataBytes, udpDataBytes.length, clientAddr, clientPort);
                         if(isDropPackets) {
-                            packetModCount = (packetModCount+1)%5;
-                            if(packetModCount == 0) {
-                                // drop this packet!
+//                            packetModCount = (packetModCount+1)%5;
+//                            if(packetModCount == 0) {
+//                                // drop this packet!
+//                                continue;
+//                            }
+                            int randNum = randIdxGen.nextInt(1000);
+                            if (randNum > 200 && randNum <= 400) {
+                                // drop the packet!
                                 continue;
                             }
+                        
                         }
                         tcServerSocket.getUdpSocket().send(udpPacket);
                         System.out.println("Sending Datapacket--> Sequence Number=" + sequenceNumber+" | Sending rate="+curState.X);
