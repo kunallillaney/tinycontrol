@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java.util.Timer;
+import java.util.TimerTask;
 import java.util.TreeMap;
 
 import cn.tinycontrol.common.model.DataPacket;
@@ -10,17 +11,48 @@ public class TinyClientThread implements Runnable{
 	TinyClientSocket tinySocket;
 	PacketHistory packetHistory = PacketHistory.getInstance();
 	PacketTrack packetTrack = new PacketTrack();
-	TreeMap<Integer, NuPack> lossList = new TreeMap<Integer, NuPack>();
-	long xRecv = 0;
+	TreeMap<Integer, NuPack> lossList;
+	static long xRecv = 0;
 	long xRecvRate = 0;
 	long lossRate=0, prevLossRate=0;
 	boolean KeepAlive = true;
+	static boolean timerOFF = true;
 	
+	Timer _timer;
+	TimerTask _timerTask;
 	
-	public long getxRecvRate() {
-		RTT.setRTT();
-		xRecvRate = xRecv/ RTT.getRTT();
-		return xRecvRate;
+	public Timer getNewTimer() {
+		_timer = new Timer();
+		return _timer;
+	}
+	
+	public TimerTask getNewTimerTask() {
+		_timerTask = new FeedbackTask(this);
+		return _timerTask;
+	}
+	
+	public void startTimer(int delay) {
+		getNewTimer().schedule(getNewTimerTask(), delay);
+	}
+	
+	public void stopTimer() {
+		_timer.cancel();
+	}
+	
+	public void restartTimer(int delay) {
+		_timer.cancel();
+		_timer.purge();
+		getNewTimer().schedule(getNewTimerTask(), delay);
+	}
+	
+	public TinyClientThread(TinyClientSocket socket) {
+		// TODO Auto-generated constructor stub
+		tinySocket = socket;
+		lossList = new TreeMap<Integer, NuPack>();
+	}
+	
+	public long getxRecv() {
+		return xRecv;
 	}
 
 	public void setxRecv(long xRecv) {
@@ -36,23 +68,25 @@ public class TinyClientThread implements Runnable{
 		try {
 			while(this.KeepAlive){
 				DataPacket receivePacket = tinySocket.receivePacket();
-				System.out.println("Data Received");
+				//System.out.println("Data Received");
 				xRecv++;
-				//Start Timer thread
-				Timer timer = new Timer();
-				FeedbackTask feedbackTask = new FeedbackTask(tinySocket, this);
-				timer.schedule(feedbackTask, receivePacket.getRTT());
-				System.out.println("Timer thread started");
 				//Get data from the packet and send it to the application above
-				
-				//Adding to History
 				ClientPacket clientPacket = new ClientPacket(receivePacket);
+				packetHistory.addPacket(clientPacket);//Adding to History
 				
-				packetHistory.addPacket(clientPacket);
-				System.out.println("Packet added to History");
+				//Start Timer thread
+				if(timerOFF){
+					RTT.setRTT();
+					startTimer(receivePacket.getRTT());
+					System.out.println("Timer thread started");
+					timerOFF=false;
+				}
+				
+				//System.out.println("Packet added to History");
 				
 				//Checking for Loss Events
 				if(CheckLossEvent(clientPacket)){
+					System.out.println("Packet Loss Detected");
 					if(lossList.isEmpty()){
 						//First Loss Event
 						System.out.println("First Loss Detected");
@@ -67,7 +101,8 @@ public class TinyClientThread implements Runnable{
 						if(lossRate>prevLossRate){
 							xRecvRate = xRecv/RTT.getRTT();
 							//Expire Feedback Timer
-							timer.schedule(feedbackTask, 0);
+							//timer.schedule(feedbackTask, 0);
+							restartTimer(0);
 						}
 						prevLossRate = lossRate;
 					}//End of inner if
@@ -93,7 +128,7 @@ public class TinyClientThread implements Runnable{
 	}
 	
 	public boolean CheckLossEvent(ClientPacket clientPacket){
-		System.out.println("Inside CheckLossEvent");
+		//System.out.println("Inside CheckLossEvent");
 		if(clientPacket.getDataPacket().getSequenceNumber()==(packetHistory.getMaxPacket()+1) && packetTrack.isEmpty()){
 			
 			return false;
@@ -114,7 +149,7 @@ public class TinyClientThread implements Runnable{
 	}
 	
 	public void makeNduPack(ClientPacket clientPacket){
-		System.out.println("Inside MakeNDUPACK");
+		//System.out.println("Inside MakeNDUPACK");
 		for(int i=packetHistory.getMaxPacket()+1;i<clientPacket.getDataPacket().getSequenceNumber();i++){
 			NuPack nuPack = new NuPack(packetHistory.getLastPacket(), clientPacket);
 			packetTrack.addPacket(i, nuPack);

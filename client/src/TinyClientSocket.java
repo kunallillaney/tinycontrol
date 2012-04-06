@@ -59,16 +59,16 @@ public class TinyClientSocket {
 		FeedbackPacket feedbackPacket = new FeedbackPacket(0, 0, 0, 0);
 		feedbackPacket = setPacket(feedbackPacket, -1);// Setting to SYN
 		this.sendPacket(feedbackPacket);//Sending
-		System.out.println("SYN packets sent");
+		//System.out.println("SYN packets sent");
 		DataPacket dataPacket = this.receivePacket();
 		//Checking for SYN-ACK
 		if(dataPacket.getSequenceNumber()==-1){
-			System.out.println("SYN ACK received");
+			//System.out.println("SYN ACK received");
 			feedbackPacket = new FeedbackPacket(0, 0, 0, 0);
 			feedbackPacket = setPacket(feedbackPacket, -2);// Setting to ACK
 			feedbackPacket.setTimeStamp(dataPacket.getTimeStamp());//Inserting TimeStamp
 			this.sendPacket(feedbackPacket);//Sending Packet
-			System.out.println("ACK packet sent");
+			//System.out.println("ACK packet sent");
 			this.receiveThread();//Start Thread
 		}
 			
@@ -91,7 +91,7 @@ public class TinyClientSocket {
 		byte[] sendData = packet.constructBytes();
 		DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length,
 				tinyIPAddress, tinyPort);
-		clientSocket.send(sendPacket);
+		//clientSocket.send(sendPacket);
 		System.out.println("Packet sent");
 	}
 
@@ -102,6 +102,7 @@ public class TinyClientSocket {
 		clientSocket.receive(receivePacket);
 		receiveData = receivePacket.getData(); // TODO: Kunal check if you still need this line 
 		DataPacket dataPacket = new DataPacket(receivePacket);
+		System.out.println("Packet received");
 		return dataPacket;
 	}
 
@@ -120,7 +121,7 @@ public class TinyClientSocket {
 	public void receiveThread(){
 		
 		System.out.println("Packet received");
-		tinyThread = new TinyClientThread();
+		tinyThread = new TinyClientThread(this);
 		System.out.println("Thread started");
 		tinyThread.start(this);
 		

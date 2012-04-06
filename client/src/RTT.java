@@ -8,7 +8,7 @@ public class RTT {
 	}
 
 	public static void setRTT() {
-		RTT = PacketHistory.getInstance().getLastPacket().getTime();
+		RTT = PacketHistory.getInstance().getLastPacket().getDataPacket().getRTT();
 	}
 	
 	
