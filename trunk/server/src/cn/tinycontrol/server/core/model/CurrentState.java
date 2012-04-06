@@ -17,6 +17,10 @@ public class CurrentState {
     
     private boolean isAnyFeedbackPacketSeen;
     
+    public long tld;
+
+    public int initialRate;
+    
     public void addIntoXRecvSet(Float xRecv) {
         xRecvSet.remove(0);
         xRecvSet.add(xRecv);

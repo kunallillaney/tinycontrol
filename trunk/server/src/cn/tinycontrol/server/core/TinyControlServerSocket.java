@@ -9,8 +9,11 @@ public class TinyControlServerSocket {
 	
 	private UDPReceiverThread recvThread;
 	
+	private long socketCreateTime;
+	
 	//implement accept
 	public TinyControlServerSocket(int port) throws SocketException {
+	    socketCreateTime = System.currentTimeMillis();
 		udpSocket = new DatagramSocket(port);
 		recvThread = new UDPReceiverThread(this);
 		recvThread.start();
@@ -23,5 +26,9 @@ public class TinyControlServerSocket {
 	public DatagramSocket getUdpSocket() {
         return udpSocket;
     }
+	
+	public int getCurTime() {
+	    return (int)(System.currentTimeMillis() - socketCreateTime);
+	}
 	
 }
