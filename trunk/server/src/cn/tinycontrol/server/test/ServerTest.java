@@ -1,8 +1,5 @@
 package cn.tinycontrol.server.test;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.SocketException;
 
@@ -14,21 +11,12 @@ public class ServerTest {
 		TinyControlServerSocket servsock;
 		try {
 			servsock = new TinyControlServerSocket(9876);
-			File myFile = new File("C:\\MyFile.txt");
-			byte[] mybytearray = new byte[(int) myFile.length()];
-			BufferedInputStream bis = new BufferedInputStream(new FileInputStream(myFile));
-			bis.read(mybytearray, 0, mybytearray.length);
-			
-			TinyControlSocket sock = servsock.accept();
-			//boolean condition = true;
-			int count = 0;
-			//while (count  < (int)(2000*1000*1000*1000/mybytearray.length)) {
-			while (count  < 66) {	
-			    sock.write(mybytearray, 0, mybytearray.length);
-				count++;
-				//Thread.sleep(100);
+			while(true) {
+				TinyControlSocket sock = servsock.accept();
+				//boolean condition = true;
+				HandleConnectionThread htc = new HandleConnectionThread(sock);
+				htc.start();
 			}
-			sock.close();
 		} catch (SocketException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
