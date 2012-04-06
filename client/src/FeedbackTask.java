@@ -17,7 +17,7 @@ public class FeedbackTask extends TimerTask {
 	public void run() {
 		if(myParent.getxRecv()!=0){
 			
-			System.out.println("Sending Feedback packet:"+RTT.getRTT());
+//			System.out.println("Sending Feedback packet:"+RTT.getRTT());
 			long elapsedTime = (System.currentTimeMillis() - myParent.packetHistory
 					.getLastPacket().getTime());
 			float recvRate = ((float)myParent.getxRecv() * DataPacket.PAYLOAD_LENGTH / RTT.getRTT());
@@ -27,7 +27,7 @@ public class FeedbackTask extends TimerTask {
 					(int) elapsedTime, recvRate, myParent.lossRate);
 			try {
 				myParent.tinySocket.sendPacket(feedbackPacket);
-				System.out.println(feedbackPacket);
+//				System.out.println(feedbackPacket);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
