@@ -12,9 +12,9 @@ public class TinyClientThread implements Runnable{
 	PacketHistory packetHistory = PacketHistory.getInstance();
 	PacketTrack packetTrack = new PacketTrack();
 	TreeMap<Integer, NuPack> lossList;
-	static long xRecv = 0;
-	long xRecvRate = 0;
-	long lossRate=0, prevLossRate=0;
+	static float xRecv = 0;
+	float xRecvRate = 0;
+	float lossRate=0, prevLossRate=0;
 	boolean KeepAlive = true;
 	static boolean timerOFF = true;
 	
@@ -32,6 +32,9 @@ public class TinyClientThread implements Runnable{
 	}
 	
 	public void startTimer(int delay) {
+        if (_timer != null) {
+            _timer.cancel();
+        }
 		getNewTimer().schedule(getNewTimerTask(), delay);
 	}
 	
@@ -51,7 +54,7 @@ public class TinyClientThread implements Runnable{
 		lossList = new TreeMap<Integer, NuPack>();
 	}
 	
-	public long getxRecv() {
+	public float getxRecv() {
 		return xRecv;
 	}
 
@@ -72,11 +75,11 @@ public class TinyClientThread implements Runnable{
 				xRecv++;
 				//Get data from the packet and send it to the application above
 				ClientPacket clientPacket = new ClientPacket(receivePacket);
-				packetHistory.addPacket(clientPacket);//Adding to History
 				
 				//Start Timer thread
 				if(timerOFF){
-					RTT.setRTT();
+					//RTT.setRTT();
+				    RTT.RTT = clientPacket.getDataPacket().getRTT();
 					startTimer(receivePacket.getRTT());
 					System.out.println("Timer thread started");
 					timerOFF=false;
@@ -87,15 +90,19 @@ public class TinyClientThread implements Runnable{
 				//Checking for Loss Events
 				if(CheckLossEvent(clientPacket)){
 					System.out.println("Packet Loss Detected");
-					if(lossList.isEmpty()){
+					if(packetTrack.intervalList.getIntervalList().isEmpty()) {
+                        System.out.println("First Loss Detected");
+                        xRecvRate = (float)xRecv / RTT.getRTT();
+                        lossRate = (float) ((3 * Math.pow(1000, 2)) / (2 * Math.pow(RTT.getRTT(), 2) * Math.pow(0.05 * xRecvRate, 2)));
+                        packetTrack.intervalList.addFirstInterval(clientPacket.getDataPacket().getSequenceNumber(), clientPacket.getTime());
+                    }
+					/*if(lossList.isEmpty()){
 						//First Loss Event
-						System.out.println("First Loss Detected");
-						xRecvRate = xRecv / RTT.getRTT();
-						lossRate = (long) ((3 * Math.pow(1000, 2)) / (2 * Math.pow(RTT.getRTT(), 2) * Math.pow(0.05 * xRecvRate, 2)));
-						packetTrack.intervalList.addNewInterval(clientPacket.getDataPacket().getSequenceNumber(), clientPacket.getTime());
-					}
+						
+					}*/
 					//Sending TreeMap to check for NewLossEvent
-					if(packetTrack.CheckNewLossEvent(packetTrack.incrementPackValue(clientPacket))){
+					else if(packetTrack.CheckNewLossEvent(packetTrack.incrementPackValue(clientPacket))){
+					    
 						lossRate = packetTrack.CalculateLossRate();
 						System.out.println("Loss Rate: "+lossRate);
 						if(lossRate>prevLossRate){
@@ -107,6 +114,7 @@ public class TinyClientThread implements Runnable{
 						prevLossRate = lossRate;
 					}//End of inner if
 				}//End of outer if
+                packetHistory.addPacket(clientPacket);//Adding to History
 			}//End of while
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -139,6 +147,7 @@ public class TinyClientThread implements Runnable{
 		}
 		else{
 			makeNduPack(clientPacket);
+			System.out.println(packetTrack);
 			lossList = packetTrack.incrementPackValue(clientPacket);
 			if(lossList.isEmpty())
 				return false;

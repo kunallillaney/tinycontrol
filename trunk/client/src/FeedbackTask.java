@@ -36,8 +36,7 @@ public class FeedbackTask extends TimerTask {
 		}
 		RTT.setRTT();
 		myParent.setxRecv(0);
-		myParent.getNewTimer().schedule(myParent.getNewTimerTask(),
-				RTT.getRTT());
+		myParent.startTimer((int)RTT.getRTT());
 		//System.out.println("End of feedback"+ RTT.getRTT());
 		// tinyThread.timer.schedule(this, (long));
 	}

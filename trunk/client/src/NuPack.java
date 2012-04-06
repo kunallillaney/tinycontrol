@@ -35,5 +35,11 @@ public class NuPack {
 	public void setPackValue(int packValue) {
 		this.packValue = packValue;
 	}
+
+    @Override
+    public String toString() {
+        return "NuPack [before=" + before + ", after=" + after + ", packValue="
+                + packValue + "]";
+    }
 	
 }
