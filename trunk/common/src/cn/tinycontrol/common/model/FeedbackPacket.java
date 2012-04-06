@@ -73,5 +73,12 @@ public class FeedbackPacket {
 		TypeByteUtil.toByta(this.getLossEventRate(), fPacket, 12);
 		return fPacket;		
 	}
+
+	@Override
+	public String toString() {
+		return "FeedbackPacket [timeStamp=" + timeStamp + ", elapsedTime="
+				+ elapsedTime + ", receiveRate=" + receiveRate
+				+ ", lossEventRate=" + lossEventRate + "]";
+	}
 	
 }

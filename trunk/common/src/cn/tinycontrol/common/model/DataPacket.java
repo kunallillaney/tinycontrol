@@ -78,4 +78,11 @@ public class DataPacket {
 				this.getPayLoad().length);
 		return packet;
 	}
+
+	@Override
+	public String toString() {
+		return "DataPacket [sequenceNumber=" + sequenceNumber + ", timeStamp="
+				+ timeStamp + ", RTT=" + RTT + "]";
+	}
+	
 }
