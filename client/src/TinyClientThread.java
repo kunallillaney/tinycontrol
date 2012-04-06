@@ -81,7 +81,7 @@ public class TinyClientThread implements Runnable{
 					//RTT.setRTT();
 				    RTT.RTT = clientPacket.getDataPacket().getRTT();
 					startTimer(receivePacket.getRTT());
-					System.out.println("Timer thread started");
+//					System.out.println("Timer thread started");
 					timerOFF=false;
 				}
 				
@@ -89,9 +89,9 @@ public class TinyClientThread implements Runnable{
 				
 				//Checking for Loss Events
 				if(CheckLossEvent(clientPacket)){
-					System.out.println("Packet Loss Detected");
+//					System.out.println("Packet Loss Detected");
 					if(packetTrack.intervalList.getIntervalList().isEmpty()) {
-                        System.out.println("First Loss Detected");
+//                        System.out.println("First Loss Detected");
                         xRecvRate = (float)xRecv / RTT.getRTT();
                         lossRate = (float) ((3 * Math.pow(1000, 2)) / (2 * Math.pow(RTT.getRTT(), 2) * Math.pow(0.05 * xRecvRate, 2)));
                         packetTrack.intervalList.addFirstInterval(clientPacket.getDataPacket().getSequenceNumber(), clientPacket.getTime());
@@ -104,7 +104,7 @@ public class TinyClientThread implements Runnable{
 					else if(packetTrack.CheckNewLossEvent(packetTrack.incrementPackValue(clientPacket))){
 					    
 						lossRate = packetTrack.CalculateLossRate();
-						System.out.println("Loss Rate: "+lossRate);
+//						System.out.println("Loss Rate: "+lossRate);
 						if(lossRate>prevLossRate){
 							xRecvRate = xRecv/RTT.getRTT();
 							//Expire Feedback Timer
@@ -147,7 +147,7 @@ public class TinyClientThread implements Runnable{
 		}
 		else{
 			makeNduPack(clientPacket);
-			System.out.println(packetTrack);
+//			System.out.println(packetTrack);
 			lossList = packetTrack.incrementPackValue(clientPacket);
 			if(lossList.isEmpty())
 				return false;

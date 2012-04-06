@@ -77,7 +77,7 @@ public class TinyClientSocket {
 
 	// Ends the UDP Connection
 	public void endConnection() throws IOException {
-		System.out.println("Connection Ended");
+//		System.out.println("Connection Ended");
 		tinyThread.setKeepAlive(false);
 		FeedbackPacket feedbackPacket = new FeedbackPacket(0, 0, 0, 0);
 		feedbackPacket = setPacket(feedbackPacket, -3);// Setting to FIN
@@ -92,7 +92,7 @@ public class TinyClientSocket {
 		DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length,
 				tinyIPAddress, tinyPort);
 		clientSocket.send(sendPacket);
-		System.out.println("Packet sent");
+//		System.out.println("Packet sent");
 	}
 
 	// Receive a UDP Packet
@@ -102,7 +102,7 @@ public class TinyClientSocket {
 		clientSocket.receive(receivePacket);
 		receiveData = receivePacket.getData(); // TODO: Kunal check if you still need this line 
 		DataPacket dataPacket = new DataPacket(receivePacket);
-		System.out.println("Packet received");
+//		System.out.println("Packet received");
 		return dataPacket;
 	}
 
@@ -120,9 +120,9 @@ public class TinyClientSocket {
 	//Creating Thread
 	public void receiveThread(){
 		
-		System.out.println("Packet received");
+//		System.out.println("Packet received");
 		tinyThread = new TinyClientThread(this);
-		System.out.println("Thread started");
+//		System.out.println("Thread started");
 		tinyThread.start(this);
 		
 	}

@@ -70,7 +70,7 @@ public class UDPReceiverThread extends Thread {
 				    MapHandler.getInstance().get(feedbackPacket.getSourceAddr(),feedbackPacket.getPort()).shutDown();
 					break;
 				default: // feedback
-					System.out.println("Recieved Feedback Packet from " + clientDetails + ". Packet: " + feedbackPacket);
+					//System.out.println("Recieved Feedback Packet from " + clientDetails + ". Packet: " + feedbackPacket);
 					MapHandler.getInstance().get(feedbackPacket.getSourceAddr(),feedbackPacket.getPort()).handleFeedBackPacket(feedbackPacket);
 				}
 			}
