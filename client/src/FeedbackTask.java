@@ -16,12 +16,14 @@ public class FeedbackTask extends TimerTask{
 	@Override
 	public void run() {
 		
-		long elapsedTime = (tinySocket.startTime-tinyThread.packetHistory.getLastPacket().getTime()) - System.currentTimeMillis();
+		long elapsedTime = (System.currentTimeMillis()-tinyThread.packetHistory.getLastPacket().getTime());
+		System.out.println(System.currentTimeMillis()+":"+tinySocket.startTime+":"+tinyThread.packetHistory.getLastPacket().getTime());
 		long recvRate = tinyThread.getxRecvRate();
 		long tStamp = tinyThread.packetHistory.getLastPacket().getDataPacket().getTimeStamp();
 		FeedbackPacket feedbackPacket = new FeedbackPacket((int)tStamp, (int)elapsedTime, recvRate, tinyThread.lossRate);
 		try {
 			tinySocket.sendPacket(feedbackPacket);
+			System.out.println(feedbackPacket);
 		
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

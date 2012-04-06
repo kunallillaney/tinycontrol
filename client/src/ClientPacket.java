@@ -10,7 +10,8 @@ public class ClientPacket {
 	public ClientPacket(DataPacket sample) {
 
 		dataPacket=sample;
-		time = TinyClientSocket.startTime - System.currentTimeMillis();
+		//time = TinyClientSocket.startTime - System.currentTimeMillis();
+		time = System.currentTimeMillis();
 	
 	}
 
