@@ -71,6 +71,9 @@ public class ServerWorkerThread implements Runnable, ServerConstants {
         noFeedbackTimer.startTimer(); // Initial case
         int sequenceNumber = 0;
         boolean testCondn = false;
+        String isDropPacketsStr = System.getProperty("tinycontrol.droppackets");
+        boolean isDropPackets = isDropPacketsStr.equalsIgnoreCase("true");
+        
         while(!testCondn) {
             // Keep Sending data packets at rate X
             int totalDataSent = 0; // in bytes
@@ -78,8 +81,8 @@ public class ServerWorkerThread implements Runnable, ServerConstants {
             byte[] data = new byte[DataPacket.PAYLOAD_LENGTH];
             for (int i = 0; i < data.length; i++) {
 				data[i] = (byte)i;
-				
 			}
+            int packetModCount=0;
             while((System.currentTimeMillis() - startTime) < 1000) { // 1 second
                 if(totalDataSent < curState.X) {
                     try {
@@ -88,6 +91,13 @@ public class ServerWorkerThread implements Runnable, ServerConstants {
                         System.out.println("Sending data packet " + dataPacket);
 						byte[] udpDataBytes = dataPacket.constructBytes();
                         DatagramPacket udpPacket = new DatagramPacket(udpDataBytes, udpDataBytes.length, clientAddr, clientPort);
+                        if(isDropPackets) {
+                            packetModCount = (packetModCount+5)%5;
+                            if(packetModCount == 0) {
+                                // drop this packet!
+                                continue;
+                            }
+                        }
                         tcServerSocket.getUdpSocket().send(udpPacket);
                         totalDataSent += DataPacket.PAYLOAD_LENGTH;
                     } catch (IOException e) {
