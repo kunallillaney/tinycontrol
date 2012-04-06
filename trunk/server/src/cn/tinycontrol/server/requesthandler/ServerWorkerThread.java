@@ -88,7 +88,6 @@ public class ServerWorkerThread implements Runnable, ServerConstants {
                     try {
                         //pipedInputStream.read(data , 0, DataPacket.PAYLOAD_LENGTH);
 						DataPacket dataPacket = new DataPacket(sequenceNumber ++, tcServerSocket.getCurTime(), curState.R, data);
-                        System.out.println("Sending data packet " + dataPacket);
 						byte[] udpDataBytes = dataPacket.constructBytes();
                         DatagramPacket udpPacket = new DatagramPacket(udpDataBytes, udpDataBytes.length, clientAddr, clientPort);
                         if(isDropPackets) {
@@ -99,6 +98,7 @@ public class ServerWorkerThread implements Runnable, ServerConstants {
                             }
                         }
                         tcServerSocket.getUdpSocket().send(udpPacket);
+                        System.out.println("Sending data packet " + dataPacket);
                         totalDataSent += DataPacket.PAYLOAD_LENGTH;
                     } catch (IOException e) {
                         // TODO Auto-generated catch block
