@@ -90,8 +90,8 @@ public class TinyClientThread implements Runnable{
 				//Checking for Loss Events
 				if(CheckLossEvent(clientPacket)){
 //					System.out.println("Packet Loss Detected");
+					System.out.println(clientPacket.getDataPacket().getSequenceNumber());
 					if(packetTrack.intervalList.getIntervalList().isEmpty()) {
-//                        System.out.println("First Loss Detected");
                         xRecvRate = (float)xRecv / RTT.getRTT();
                         lossRate = (float) ((3 * Math.pow(1000, 2)) / (2 * Math.pow(RTT.getRTT(), 2) * Math.pow(0.05 * xRecvRate, 2)));
                         packetTrack.intervalList.addFirstInterval(clientPacket.getDataPacket().getSequenceNumber(), clientPacket.getTime());
