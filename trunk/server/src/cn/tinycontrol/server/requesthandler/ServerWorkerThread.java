@@ -98,7 +98,7 @@ public class ServerWorkerThread implements Runnable, ServerConstants {
                             }
                         }
                         tcServerSocket.getUdpSocket().send(udpPacket);
-                        System.out.println("Sending data packet with sequence number=" + sequenceNumber+"and sending rate="+curState.X);
+                        System.out.println("Sending Datapacket--> Sequence Number=" + sequenceNumber+" | Sending rate="+curState.X);
                         totalDataSent += DataPacket.PAYLOAD_LENGTH;
                     } catch (IOException e) {
                         // TODO Auto-generated catch block
