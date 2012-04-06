@@ -33,6 +33,7 @@ public class PacketTrack {
 				
 				if(packetTrack.get(integer).getPackValue()>2){
 					lossEventList.put(integer, packetTrack.get(integer));
+					System.out.println(integer);
 				}
 			}
 		}
