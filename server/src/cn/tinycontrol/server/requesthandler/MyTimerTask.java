@@ -24,7 +24,7 @@ public class MyTimerTask extends java.util.TimerTask implements ServerConstants{
 		}
 		
 		float time=Math.max(4*myParent.curState.R, 2*DataPacket.PAYLOAD_LENGTH/myParent.curState.X);
-		myParent.getNewTimer().schedule(myParent.getNewTimerTask(), (int)time);
+		myParent.startTimer((int)time);
 	}
 	
 	private void updateLimit(float tempxRecv) {

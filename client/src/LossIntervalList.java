@@ -10,6 +10,13 @@ public class LossIntervalList {
 		return intervalList.get(intervalList.size()-1);
 	}
 	
+	public void addFirstInterval(Integer seqNo, long seqTime){
+	    LossInterval curInterval = new LossInterval();
+	    curInterval.setStartSeqNo(seqNo);
+	    curInterval.setStartTime(seqTime);
+	    intervalList.add(curInterval);
+	}
+	
 	public void addNewInterval(Integer seqNo, long seqTime){
 		LossInterval curInterval = new LossInterval();
 		curInterval.setStartSeqNo(seqNo);
@@ -21,13 +28,13 @@ public class LossIntervalList {
 		intervalList.add(curInterval);
 	}
 	
-	public long CalculateLossRate(){
-		long iTot=0, wTot=0, iMean=0, p=0;
+	public float CalculateLossRate(){
+		float iTot=0, wTot=0, iMean=0, p=0;
 		for(int i=0;i<8 && i<intervalList.size();i++){
-			wTot = (long) (wTot + weights[i]);
+			wTot = (float) (wTot + weights[i]);
 		}
 		for(int i=0;i<8 && i<intervalList.size();i++){
-			iTot = (long) (iTot + intervalList.get(intervalList.size()-1-i).getStartTime()*weights[i]);
+			iTot = (float) (iTot + (intervalList.get(intervalList.size()-1-i).getStartTime() - TinyClientSocket.startTime)*weights[i]);
 		}
 		iMean = iTot/wTot;
 		p=1/iMean;

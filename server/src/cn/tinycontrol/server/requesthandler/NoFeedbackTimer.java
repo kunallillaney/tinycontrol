@@ -34,12 +34,18 @@ public class NoFeedbackTimer {
     }   
     
     public void startTimer() {
+        if (_timer != null) {
+            _timer.cancel();
+        }
         getNewTimer();
         getNewTimerTask();
         _timer.schedule(_timerTask, expireAfter);
     }
     
     public void startTimer(int delay) {
+        if (_timer != null) {
+            _timer.cancel();
+        }
         getNewTimer();
         getNewTimerTask();
         _timer.schedule(_timerTask, delay);

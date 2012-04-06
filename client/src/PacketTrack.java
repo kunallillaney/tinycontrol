@@ -78,7 +78,7 @@ public class PacketTrack {
 		
 	}//End of method
 	
-	public long CalculateLossRate(){
+	public float CalculateLossRate(){
 		return intervalList.CalculateLossRate();
 	}
 	
@@ -86,4 +86,9 @@ public class PacketTrack {
 		
 	}
 
+    @Override
+    public String toString() {
+        return "PacketTrack [packetTrack=" + packetTrack + "]";
+    }
+	
 }

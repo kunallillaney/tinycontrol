@@ -6,6 +6,7 @@ public class PacketHistory {
 	
 	private ArrayList<ClientPacket> packetList;
 	private int maxPacket;
+	private int prevMaxPacket;
 	
 	protected PacketHistory(){
 		
@@ -16,6 +17,7 @@ public class PacketHistory {
 			packetHistory = new PacketHistory();
 			packetHistory.packetList = new ArrayList<ClientPacket>();
 			packetHistory.maxPacket=0;
+			packetHistory.prevMaxPacket = 0;
 		}
 		return packetHistory;
 	}
@@ -25,8 +27,10 @@ public class PacketHistory {
 	public void addPacket(ClientPacket clientPacket){
 		packetList.add(clientPacket);
 		//System.out.println("Packet successfully added to History");
-		if(clientPacket.getDataPacket().getSequenceNumber()>maxPacket)
+		if(clientPacket.getDataPacket().getSequenceNumber()>maxPacket) {
+		    prevMaxPacket = maxPacket;
 			maxPacket = clientPacket.getDataPacket().getSequenceNumber();
+		}
 	}
 	
 	public ClientPacket getLastPacket(){
@@ -41,7 +45,13 @@ public class PacketHistory {
 	public void setMaxPacket(int maxPacket) {
 		this.maxPacket = maxPacket;
 	}
-	
-	
 
+    public int getPrevMaxPacket() {
+        return prevMaxPacket;
+    }
+
+    public void setPrevMaxPacket(int prevMaxPacket) {
+        this.prevMaxPacket = prevMaxPacket;
+    }
+	
 }
