@@ -22,18 +22,25 @@ public class CurrentState {
     public int initialRate;
     
     public void addIntoXRecvSet(Float xRecv) {
-        xRecvSet.remove(0);
+        if(!xRecvSet.isEmpty()) {
+        	xRecvSet.remove(0);
+        }
         xRecvSet.add(xRecv);
     }
     
     public float getMax() {
-    	float maxRecv= Math.max(xRecvSet.get(0),xRecvSet.get(1));
+    	float maxRecv;
+    	if(xRecvSet.size() == 2) {
+        	maxRecv = Math.max(xRecvSet.get(0),xRecvSet.get(1));
+    	} else {
+    		maxRecv = xRecvSet.get(0);
+    	}
     	return maxRecv;
     }
 
 	public void addOnlyThis(Float xRecv) {
+		xRecvSet = new ArrayList<Float>(2);
         xRecvSet.add(xRecv);
-        xRecvSet.remove(1);
     }
 
 	public boolean isAnyFeedbackPacketSeen() {

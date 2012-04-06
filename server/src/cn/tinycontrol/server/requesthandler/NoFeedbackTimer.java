@@ -14,7 +14,7 @@ public class NoFeedbackTimer {
 
 	public NoFeedbackTimer(CurrentState curState) {
 		this.curState = curState;
-		this.timerExpire = new Timer();
+		this.timerExpire = new Timer(true);
 	}
 	
 	public void setExpireAfter(int expireAfter) {
@@ -27,7 +27,8 @@ public class NoFeedbackTimer {
 	}
 
 	public void resetTimer(long time) {
-		timerExpire.cancel();
+		//timerExpire.cancel();
+		//timerExpire.purge();
 		MyTimerTask timerTask = new MyTimerTask(curState, timerExpire);
 		timerExpire.schedule(timerTask , (long) (System.currentTimeMillis()+time));
 	}
