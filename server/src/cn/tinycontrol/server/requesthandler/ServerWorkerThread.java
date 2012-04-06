@@ -91,7 +91,7 @@ public class ServerWorkerThread implements Runnable, ServerConstants {
 						byte[] udpDataBytes = dataPacket.constructBytes();
                         DatagramPacket udpPacket = new DatagramPacket(udpDataBytes, udpDataBytes.length, clientAddr, clientPort);
                         if(isDropPackets) {
-                            packetModCount = (packetModCount+5)%5;
+                            packetModCount = (packetModCount+1)%5;
                             if(packetModCount == 0) {
                                 // drop this packet!
                                 continue;
