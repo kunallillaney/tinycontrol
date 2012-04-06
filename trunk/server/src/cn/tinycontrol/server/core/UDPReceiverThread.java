@@ -23,13 +23,15 @@ public class UDPReceiverThread extends Thread {
 	
 	public TinyControlSocket getSocketFromQueue() {
 		// TODO Removes a TinyControlSocket from ackQueue and returns that socket to the caller
+		TinyControlSocket retVal = null;
 		try {
-			return ackQueue.take();
+			retVal = ackQueue.take();
+			System.out.println("Successfully accepted a connection...");
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return null;
+		return retVal;
 	}
 	
 	@Override
@@ -41,20 +43,25 @@ public class UDPReceiverThread extends Thread {
 				byte[] receiveData = new byte[FeedbackPacket.PACKET_LENGTH];
 				DatagramPacket receivePacket = new DatagramPacket(receiveData,receiveData.length);
 				tcServerSocket.getUdpSocket().receive(receivePacket);
-				
+				String clientDetails = receivePacket.getAddress()+ " " + receivePacket.getPort();
 				FeedbackPacket feedbackPacket = new FeedbackPacket(receivePacket);
+				System.out.println("Recieved connection from " + clientDetails + " " + feedbackPacket);
 				
 				switch (feedbackPacket.getElapsedTime()) {
 				case -1: // SYN
-					DataPacket synAckDataPacket = new DataPacket(-1, 0, 0, new byte[1000]);
+					System.out.println("Recieved SYN from " + clientDetails);
+					DataPacket synAckDataPacket = new DataPacket(-1, tcServerSocket.getCurTime(), 0, new byte[1000]);
 					byte[] synDataPacketBytes = synAckDataPacket.constructBytes();
+					System.out.println("Sending SYN ACK to " + clientDetails);
 					tcServerSocket.getUdpSocket().send(new DatagramPacket(synDataPacketBytes,
 							synDataPacketBytes.length, feedbackPacket
 									.getSourceAddr(), feedbackPacket.getPort()));
 					break;
 				case -2: // ACK
-					long currentTime = new Date().getTime();
-					int initialRTT = (int) (currentTime - threadStartTime);
+					System.out.println("Recieved ACK from " + clientDetails);
+					//long currentTime = new Date().getTime();
+					int initialRTT = tcServerSocket.getCurTime() - feedbackPacket.getTimeStamp();
+					System.out.println(initialRTT);
 					ServerWorkerThread workerThread = new ServerWorkerThread(
 							initialRTT, feedbackPacket.getSourceAddr(),
 							feedbackPacket.getPort(), tcServerSocket);
@@ -64,6 +71,7 @@ public class UDPReceiverThread extends Thread {
 				case -3: // close
 					MapHandler.getInstance().get(feedbackPacket.getSourceAddr(),feedbackPacket.getPort()).shutDown();
 				default: // feedback
+					System.out.println("Recieved Feedback Packet from " + clientDetails + ". Packet: " + feedbackPacket);
 					MapHandler.getInstance().get(feedbackPacket.getSourceAddr(),feedbackPacket.getPort()).handleFeedBackPacket(feedbackPacket);
 				}
 			}
