@@ -42,7 +42,7 @@ public class UDPReceiverThread extends Thread {
 				tcServerSocket.getUdpSocket().receive(receivePacket);
 				String clientDetails = receivePacket.getAddress()+ " " + receivePacket.getPort();
 				FeedbackPacket feedbackPacket = new FeedbackPacket(receivePacket);
-				System.out.println("Recieved connection from " + clientDetails + " " + feedbackPacket);
+				//System.out.println("Recieved connection from " + clientDetails + " " + feedbackPacket);
 				
 				switch (feedbackPacket.getElapsedTime()) {
 				case -1: // SYN
