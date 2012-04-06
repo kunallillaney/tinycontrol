@@ -8,15 +8,14 @@ import java.net.InetAddress;
 
 import cn.tinycontrol.common.model.DataPacket;
 import cn.tinycontrol.common.model.FeedbackPacket;
+import cn.tinycontrol.server.common.ServerConstants;
 import cn.tinycontrol.server.core.TinyControlServerSocket;
 import cn.tinycontrol.server.core.model.CurrentState;
 
-public class ServerWorkerThread implements Runnable {
+public class ServerWorkerThread implements Runnable, ServerConstants {
 
     private static final double FILTER_CONSTANT = 0.9; // q
     
-    private static final double t_mbi = 64;
-
     private int initialRTT;
     
     private InetAddress clientAddr;
@@ -62,7 +61,7 @@ public class ServerWorkerThread implements Runnable {
         
         noFeedbackTimer = new NoFeedbackTimer(curState);
         // Set timer to expire after 2 seconds. Do not start the timer here.
-        noFeedbackTimer.setExpireAfter(2000);
+        noFeedbackTimer.setToExpireAfter(2000);
     }
     
     @Override
@@ -72,7 +71,7 @@ public class ServerWorkerThread implements Runnable {
         noFeedbackTimer.startTimer(); // Initial case
         int sequenceNumber = 0;
         boolean testCondn = false;
-        while(!testCondn) {
+        while(!isShutDown) {
             // Keep Sending data packets at rate X
             int totalDataSent = 0; // in bytes
             long startTime = System.currentTimeMillis();
@@ -139,7 +138,7 @@ public class ServerWorkerThread implements Runnable {
         runAlgorithmOne(curState, clientPacket);
         
         // 5. Reset no feedback timer to expire after RTO seconds
-        noFeedbackTimer.resetTimer(rto);
+        noFeedbackTimer.restartTimer(rto);
         
     }
     
@@ -181,6 +180,6 @@ public class ServerWorkerThread implements Runnable {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        // TODO Remove from the Map
+        MapHandler.getInstance().remove(clientAddr, clientPort);
     }
 }
