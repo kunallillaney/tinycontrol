@@ -15,6 +15,7 @@ public class TinyControlServerSocket {
 	public TinyControlServerSocket(int port) throws SocketException {
 	    socketCreateTime = System.currentTimeMillis();
 		udpSocket = new DatagramSocket(port);
+		System.out.println("Server started at port " + port +" ...");
 		recvThread = new UDPReceiverThread(this);
 		recvThread.start();
 	}

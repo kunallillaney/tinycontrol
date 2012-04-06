@@ -30,7 +30,7 @@ public class ServerWorkerThread implements Runnable {
     private PipedOutputStream pipedOutputStream;
     private NoFeedbackTimer noFeedbackTimer;
     
-    private CurrentState curState;
+    private CurrentState curState = new CurrentState();
     
     public ServerWorkerThread(int initialRTT, InetAddress clientAddr, int clientPort, TinyControlServerSocket tcServerSocket) {
         this.initialRTT = initialRTT;
@@ -49,7 +49,7 @@ public class ServerWorkerThread implements Runnable {
         
         // Initialize the Server values - initial sending rate and so on.
         int wInit = Math.min(4 * DataPacket.PAYLOAD_LENGTH, Math.max(2 * DataPacket.PAYLOAD_LENGTH, 4380));
-        curState.initialRate = wInit/this.initialRTT;
+        curState.initialRate = wInit/this.initialRTT * 1000;
         curState.X = curState.initialRate;
         curState.tld = System.currentTimeMillis(); // time when first RTT was received.
         System.out.println("Determined current sending rate as - "+curState.X);
@@ -64,6 +64,7 @@ public class ServerWorkerThread implements Runnable {
         // Self-register in the Map
         MapHandler.getInstance().add(clientAddr, clientPort, this);
         noFeedbackTimer.startTimer(); // Initial case
+        int sequenceNumber = 0;
         
         while(!isShutDown) {
             // Keep Sending data packets at rate X
@@ -74,7 +75,10 @@ public class ServerWorkerThread implements Runnable {
                     byte[] data = new byte[DataPacket.PAYLOAD_LENGTH];
                     try {
                         pipedInputStream.read(data , 0, DataPacket.PAYLOAD_LENGTH);
-                        DatagramPacket udpPacket = new DatagramPacket(data, data.length);
+						DataPacket dataPacket = new DataPacket(sequenceNumber ++, tcServerSocket.getCurTime(), curState.R, data);
+                        System.out.println("Sending data packet " + dataPacket);
+						byte[] udpDataBytes = dataPacket.constructBytes();
+                        DatagramPacket udpPacket = new DatagramPacket(udpDataBytes, udpDataBytes.length);
                         tcServerSocket.getUdpSocket().send(udpPacket);
                         totalDataSent += DataPacket.PAYLOAD_LENGTH;
                     } catch (IOException e) {
