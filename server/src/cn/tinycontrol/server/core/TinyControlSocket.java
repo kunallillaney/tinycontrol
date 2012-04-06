@@ -19,7 +19,7 @@ public class TinyControlSocket {
 	}
 
 	public void write(byte[] data,int offset, int length ) {
-		workerRunnableThread.workerThread.addData(data, offset, length);
+		//workerRunnableThread.workerThread.addData(data, offset, length);
 		// If the thread is not started start the same when the first write is called.
 		if(!workerRunnableThread.isAlive()) {
 			workerRunnableThread.start();
