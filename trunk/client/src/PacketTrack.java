@@ -47,7 +47,7 @@ public class PacketTrack {
 	
 	public boolean CheckNewLossEvent(TreeMap<Integer, NuPack> list){
 		
-		System.out.println("Inside NewCheckLossEvent");
+//		System.out.println("Inside NewCheckLossEvent");
 		if(list.isEmpty()){
 			return false;
 		}
