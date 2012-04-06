@@ -18,6 +18,8 @@ public class TinyClientThread implements Runnable{
 	
 	
 	public long getxRecvRate() {
+		RTT.setRTT();
+		xRecvRate = xRecv/ RTT.getRTT();
 		return xRecvRate;
 	}
 
@@ -61,6 +63,7 @@ public class TinyClientThread implements Runnable{
 					//Sending TreeMap to check for NewLossEvent
 					if(packetTrack.CheckNewLossEvent(packetTrack.incrementPackValue(clientPacket))){
 						lossRate = packetTrack.CalculateLossRate();
+						System.out.println("Loss Rate: "+lossRate);
 						if(lossRate>prevLossRate){
 							xRecvRate = xRecv/RTT.getRTT();
 							//Expire Feedback Timer
