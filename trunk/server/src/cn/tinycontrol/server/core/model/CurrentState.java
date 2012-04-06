@@ -29,10 +29,10 @@ public class CurrentState {
     }
     
     public float getMax() {
-    	float maxRecv;
+    	float maxRecv = 0;
     	if(xRecvSet.size() == 2) {
         	maxRecv = Math.max(xRecvSet.get(0),xRecvSet.get(1));
-    	} else {
+    	} else if(xRecvSet.size() == 1) {
     		maxRecv = xRecvSet.get(0);
     	}
     	return maxRecv;

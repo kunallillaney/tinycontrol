@@ -28,7 +28,7 @@ public class HandleConnectionThread extends Thread {
 			int count = 0;
 			//while (count  < (int)(2000*1000*1000*1000/mybytearray.length)) {
 			while (count  < 66) {	
-			    sock.write(mybytearray, 0, mybytearray.length);
+			    sock.write(mybytearray, 0, mybytearray.length-1);
 				count++;
 				//Thread.sleep(100);
 			}

@@ -71,7 +71,7 @@ public class ServerWorkerThread implements Runnable, ServerConstants {
         noFeedbackTimer.startTimer(); // Initial case
         int sequenceNumber = 0;
         boolean testCondn = false;
-        while(!isShutDown) {
+        while(!testCondn) {
             // Keep Sending data packets at rate X
             int totalDataSent = 0; // in bytes
             long startTime = System.currentTimeMillis();
