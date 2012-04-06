@@ -91,7 +91,7 @@ public class TinyClientSocket {
 		byte[] sendData = packet.constructBytes();
 		DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length,
 				tinyIPAddress, tinyPort);
-		//clientSocket.send(sendPacket);
+		clientSocket.send(sendPacket);
 		System.out.println("Packet sent");
 	}
 
