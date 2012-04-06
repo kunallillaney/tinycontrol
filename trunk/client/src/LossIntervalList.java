@@ -4,7 +4,7 @@ import java.util.ArrayList;
 public class LossIntervalList {
 	
 	private ArrayList<LossInterval> intervalList = new ArrayList<LossInterval>();
-	private double[] weights = {1.0,1.0,1.0,1.0,0.8,0.6,0.4};
+	private double[] weights = {1.0,1.0,1.0,1.0,0.8,0.6,0.4,0.2};
 	
 	public LossInterval getPreviousInterval(){
 		return intervalList.get(intervalList.size()-1);
