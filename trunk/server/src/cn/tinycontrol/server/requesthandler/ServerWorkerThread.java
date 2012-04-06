@@ -28,6 +28,9 @@ public class ServerWorkerThread implements Runnable {
     private TinyControlServerSocket tcServerSocket; // Server Socket with which this thread is associated with.
     private PipedInputStream pipedInputStream;
     private PipedOutputStream pipedOutputStream;
+    
+    //private ByteBuffer byteBuffer;
+    
     private NoFeedbackTimer noFeedbackTimer;
     
     private CurrentState curState = new CurrentState();
@@ -74,7 +77,7 @@ public class ServerWorkerThread implements Runnable {
                 if(totalDataSent < curState.X) {
                     byte[] data = new byte[DataPacket.PAYLOAD_LENGTH];
                     try {
-                        pipedInputStream.read(data , 0, DataPacket.PAYLOAD_LENGTH);
+                        //pipedInputStream.read(data , 0, DataPacket.PAYLOAD_LENGTH);
 						DataPacket dataPacket = new DataPacket(sequenceNumber ++, tcServerSocket.getCurTime(), curState.R, data);
                         System.out.println("Sending data packet " + dataPacket);
 						byte[] udpDataBytes = dataPacket.constructBytes();
