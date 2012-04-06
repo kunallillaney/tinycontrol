@@ -24,14 +24,14 @@ public class PacketHistory {
 	
 	public void addPacket(ClientPacket clientPacket){
 		packetList.add(clientPacket);
-		System.out.println("Packet successfully added to History");
+		//System.out.println("Packet successfully added to History");
 		if(clientPacket.getDataPacket().getSequenceNumber()>maxPacket)
 			maxPacket = clientPacket.getDataPacket().getSequenceNumber();
 	}
 	
 	public ClientPacket getLastPacket(){
 		
-		return packetList.get(packetList.size()-2);//Returns second last packet
+		return packetList.get(packetList.size()-1);//Returns second last packet
 	}
 
 	public int getMaxPacket() {

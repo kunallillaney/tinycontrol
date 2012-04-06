@@ -24,7 +24,7 @@ public class PacketTrack {
 	
 	public TreeMap<Integer, NuPack> incrementPackValue(ClientPacket clientpacket){
 		
-		System.out.println("Inside IncrementPackValue");
+		//System.out.println("Inside IncrementPackValue");
 		TreeMap<Integer, NuPack> lossEventList = new TreeMap<Integer, NuPack>();
 		for(int integer : packetTrack.navigableKeySet()){
 			if(integer < clientpacket.getDataPacket().getSequenceNumber()){
